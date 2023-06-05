@@ -293,6 +293,8 @@ class BrazzersManualMainWindow(QWidget):
         #% Layout for Search the DF
         self.search_df_layout = QHBoxLayout()
         self.lbl_searchDF = QLabel("Search DF")
+        self.lbl_searchDF.setFont(QFont('Roboto', 15))
+        self.lbl_searchDF.setStyleSheet("color: rgb(235,52, 180);font-weight: bold;")
         # self.btn_searchDF.clicked.connect(self.searchDF)
         self.search_textbox = QLineEdit()
         self.search_textbox.returnPressed.connect(self.searchDF)
@@ -302,7 +304,11 @@ class BrazzersManualMainWindow(QWidget):
         #% Layout for summary of the filtering:
         self.summary_layout = QGridLayout()
         self.lbl_selected_ps = QLabel("Selected PS")
-        self.lbl_ctn_selected_ps = QLabel("Ctn:")
+        self.lbl_selected_ps.setFont(QFont('Roboto', 15))
+        self.lbl_selected_ps.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
+        self.lbl_ctn_selected_ps = QLabel("CTN:")
+        self.lbl_ctn_selected_ps.setFont(QFont('Roboto', 15))
+        self.lbl_ctn_selected_ps.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
         self.txt_selected_ps = QLabel("")
         self.txt_ctn_selected_ps = QLabel("")
 
@@ -387,7 +393,9 @@ class BrazzersManualMainWindow(QWidget):
             return
             
 
-        csv_file = pathlib.Path(self.csv_dir) / "df_final_30_05_23.csv"
+        # csv_file = pathlib.Path(self.csv_dir) / "df_final_30_05_23.csv"
+        #% Take the absolute path
+        csv_file = pathlib.Path(r"/Users/joerg/repos/brazGUI/csv_data/df_final_30_05_23.csv")
         # csv_file = pathlib.Path(self.csv_dir) / "df_final_my_db_py_22_04_2022.csv"
         
         print(f"Loading {csv_file} ... ")
@@ -427,6 +435,7 @@ class BrazzersManualMainWindow(QWidget):
         self.site_list_sorted = [lf.lstrip() for lf in self.site_list_sorted]
         self.site_list_sorted.insert(0, "== All Sites ==")
 
+        self.combobox_site.setStyleSheet('color: rgb(255, 255, 255);')
         for lf, i in zip(self.site_list_sorted, range(len(self.site_list_sorted)+1)):
             self.combobox_site.addItem(lf)
             self.combobox_site.setItemData(i, Qt.AlignRight)
@@ -525,12 +534,40 @@ class BrazzersManualMainWindow(QWidget):
        self.brazzers_table.setRowCount(0)
        self.selected_ps1 = self.combobox_PS1.currentText()
        print('current_PS1: ', self.combobox_PS1.currentText())
-
+       self.txt_selected_ps.setText(self.combobox_PS1.currentText())
+       self.txt_selected_ps.setFont(QFont('Roboto', 20))
+       self.txt_selected_ps.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
        if self.selected_ps1 == "== All PS1 ==":
            self.df_selected_ps1 = self.loaded_csv_df
        else:
-           self.df_selected_ps1 = self.loaded_csv_df[self.loaded_csv_df['PS1'] == self.combobox_PS1.currentText()].sort_values(by="PS1", ascending=True)
-        
+           self.df_selected_ps1 = self.loaded_csv_df[(self.loaded_csv_df['PS1'] == self.combobox_PS1.currentText()) |#.sort_values(by="PS1", ascending=True)
+                                                    (self.loaded_csv_df['PS2'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS3'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS4'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS5'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS6'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS7'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS8'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS9'] == self.combobox_PS1.currentText()) |
+                                                    (self.loaded_csv_df['PS10'] == self.combobox_PS1.currentText())
+                                                    ].sort_values(by="PS1", ascending=True)
+                                                    # self.loaded_csv_df['PS3'] == self.combobox_PS1.currentText() |
+                                                    # self.loaded_csv_df['PS4'] == self.combobox_PS1.currentText() | 
+                                                    # self.loaded_csv_df['PS5'] == self.combobox_PS1.currentText() |
+                                                    # self.loaded_csv_df['PS6'] == self.combobox_PS1.currentText() |
+                                                    # self.loaded_csv_df['PS7'] == self.combobox_PS1.currentText() |
+                                                    # self.loaded_csv_df['PS8'] == self.combobox_PS1.currentText() |
+                                                    # self.loaded_csv_df['PS9'] == self.combobox_PS1.currentText() |
+                                                    # self.loaded_csv_df['PS10'] == self.combobox_PS1.currentText() ].sort_values(by="PS1", ascending=True)
+    #    print('length of dfself.df_selected_ps1: ', len(self.df_selected_ps1))
+       self.txt_ctn_selected_ps.setText(str(len(self.df_selected_ps1)))
+       self.txt_ctn_selected_ps.setFont(QFont('Roboto', 15))
+       self.txt_ctn_selected_ps.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
+
+
+
+
+
     #    self.df_selected_site = self.loaded_csv_df[self.loaded_csv_df['Site'] == self.combobox_site.currentText()]'
        
        self.fill_brazzers_table(self.df_selected_ps1)
@@ -684,7 +721,7 @@ class BrazzersManualMainWindow(QWidget):
         print('len of TopPS selected: ', len(self.selected_TopPS))
 
         if self.selected_TopPS[0] == "All_TopPS":
-            print('Debug 5')
+            
             self.df_selected_TopPS = self.loaded_csv_df
         else:
             # self.df_selected_TopPS = self.loaded_csv_df[self.loaded_csv_df['PS1'].isin(self.selected_TopPS)].sort_values(by="PS1", ascending=True)
