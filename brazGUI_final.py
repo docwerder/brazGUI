@@ -6,7 +6,7 @@ from typing import Optional
 from PySide2.QtGui import QPixmap, QColor, QPalette, QBrush
 from PySide2 import QtCore
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
+from PySide2.QtGui import QPixmap, QColor, QPalette, QBrush
 from PySide2.QtCore import QThread
 from PySide2.QtCore import Signal as pyqtSignal
 import os, subprocess, sys
@@ -14,7 +14,8 @@ from MultiComboBox import MultiComboBox
 from connectToWerderNas import Main_WERDERNAS
 from qt_material import apply_stylesheet
 from PySide2.QtGui import QFontDatabase
-
+from PySide2.QtGui import QColor
+from PySide2.QtCore import Qt
 
 extra1 = {
     # Button colors
@@ -59,7 +60,7 @@ from PySide2.QtWidgets import (
     QApplication, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QTableView,
     QMainWindow, QWidget, QPushButton, QComboBox, QLabel, QListWidget, QTableWidget,
     QFileDialog, QFrame, QMessageBox, QTableWidgetItem, QStyle, QPlainTextEdit, QCheckBox,
-    QScrollArea, QHeaderView
+    QScrollArea, QHeaderView, QStyleFactory
 )
 from PySide2.QtGui import QFont
 #from emat_mfl_combined.applications.pdw_upload.analysis_tools.path2proj import Path2ProjAnomaliesGeneral
@@ -94,8 +95,12 @@ class BrazzersManualMainWindow(QWidget):
 
         self.setWindowTitle("BRAZZERS - Manual Edition V0.5!")
         self.resize(1500, 1000)
+        # 
+        # 
         self.move(200, 0) #widht, height
         
+        self.set_dark_mode()
+
         
         ### Define the layout ####
         
@@ -159,7 +164,8 @@ class BrazzersManualMainWindow(QWidget):
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
 
         header.setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)
-        self.brazzers_table.resize(100, 500)
+        # self.brazzers_table.resize(1000, 500)
+        self.brazzers_table.setFixedWidth(1000)
         #% Define the function which his executed, when cell was clicked !
         self.brazzers_table.cellClicked.connect(self.cell_was_clicked)
 
@@ -191,7 +197,7 @@ class BrazzersManualMainWindow(QWidget):
         self.TopPS_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
         self.combobox_TopPS = MultiComboBox()
         self.btn_filter_TopPS = QPushButton("Filter Top PS")
-        self.btn_filter_TopPS.setFixedWidth(120)
+        self.btn_filter_TopPS.setFixedWidth(125)
         self.btn_filter_TopPS.clicked.connect(self.filter_and_show_TopPS)
         self.TopPS_layout.addWidget(self.TopPS_label)
         self.TopPS_layout.addWidget(self.btn_filter_TopPS)
@@ -263,7 +269,7 @@ class BrazzersManualMainWindow(QWidget):
         self.btn_change_theme.setFixedWidth(120)
         self.combobox_change_theme = QComboBox()
         self.combobox_change_theme.setFixedWidth(200)
-        self.combobox_change_theme.setStyleSheet('color: rgb(255, 255, 255);')
+        # self.combobox_change_theme.setStyleSheet('color: rgb(255, 255, 255);')
     
         #% Filling the ComboBox "change_theme"
         #% home directory of the themes: 
@@ -319,23 +325,75 @@ class BrazzersManualMainWindow(QWidget):
         self.summary_layout.addWidget(self.txt_ctn_selected_ps, 1, 1)
 
 
+        #% Layout for displaying the different colors of the resolutions
+        self.summary_resolution = QHBoxLayout()
+
+        self.btn_1080p_resolution = QPushButton("1080p")
+        self.btn_1080p_resolution.setStyleSheet("background-color: rgb(91, 235, 2);font-weight: bold;")
+        self.resolution_1080p = self.btn_1080p_resolution.text()
+        self.btn_1080p_resolution.clicked.connect(self.filter_resolution)
+        
+        self.btn_720p_resolution = QPushButton("720p")
+        self.btn_720p_resolution.setStyleSheet("background-color: rgb(191, 141, 3);font-weight: bold;")
+        self.btn_720p_resolution.clicked.connect(self.filter_resolution)
+        
+        self.btn_480p_resolution = QPushButton("480p")
+        self.btn_480p_resolution.setStyleSheet("background-color: rgb(130, 5, 185);font-weight: bold;")
+        self.btn_480p_resolution.clicked.connect(self.filter_resolution)
+
+        self.btn_360p_resolution = QPushButton("360p")
+        self.btn_360p_resolution.clicked.connect(self.filter_resolution)
+        # self.btn_360p_resolution.setStyleSheet("background-color: rgb(191, 141,3);font-weight: bold;")
+
+        self.btn_all_resolutions = QPushButton("All")
+        self.btn_all_resolutions.clicked.connect(self.filter_resolution)
+
+        self.summary_resolution.addWidget(self.btn_1080p_resolution)
+        self.summary_resolution.addWidget(self.btn_720p_resolution)
+        self.summary_resolution.addWidget(self.btn_480p_resolution)
+        self.summary_resolution.addWidget(self.btn_360p_resolution)
+        self.summary_resolution.addWidget(self.btn_all_resolutions)
+        
+        #% Layout for possible QTextBoxes for summary of the resolutions...
+        #% QTextBoxes should be arranged in a horizontal manner, but
+        #% inside the QVBoxLayout
+
+        self.summary_resolution_overview_layout = QVBoxLayout()
+        self.single_resolution_layout = QHBoxLayout()
+        self.overview_1080p_resolution = QPlainTextEdit("1080p Overview")
+        # self.overview_1080p_resolution.setFixedWidth(200)
+        self.overview_720p_resolution = QPlainTextEdit("720p Overview")
+        self.overview_480p_resolution = QPlainTextEdit("480p Overview")
+        self.overview_360p_resolution = QPlainTextEdit("360p Overview")
+
+        self.overview_all_resolutions = QPlainTextEdit("All Overview")
+
+
+        self.single_resolution_layout.addWidget(self.overview_1080p_resolution)
+        self.single_resolution_layout.addWidget(self.overview_720p_resolution)
+        self.single_resolution_layout.addWidget(self.overview_360p_resolution)
+        self.single_resolution_layout.addWidget(self.overview_all_resolutions)
+
+        self.summary_resolution_overview_layout.addLayout(self.single_resolution_layout)
+        
+
         #% Layout for the Output of the (possible) terminal statements...
         self.text_statements_layout = QVBoxLayout()
         self.output_textbox = QPlainTextEdit()
         text = "Welcome to brazzers db"
-        self.output_textbox.setStyleSheet("background-color: rgb(255,210,43); border-radius: 10px")
+        self.output_textbox.setStyleSheet("background-color: rgb(255,210,43); border-radius: 5px")
         self.output_textbox.appendPlainText(text)
         self.text_statements_layout.addWidget(self.output_textbox)
 
         #% Test for QFrame...
         self.layout_for_frame = QHBoxLayout()
-        self.frame_dummy_left = QFrame()
-        self.layout_for_frame.addWidget(self.frame_dummy_left)
-        self.frame_dummy_left.setFrameStyle(QFrame.Panel | QFrame.Raised)
+        # self.frame_dummy_left = QFrame()
+        # self.layout_for_frame.addWidget(self.frame_dummy_left)
+        # self.frame_dummy_left.setFrameStyle(QFrame.Panel | QFrame.Raised)
         self.frame_for_scrollarea = None
         self.scrolling_area = QScrollArea()
         self.scrolling_area.setWidgetResizable(True)
-
+        self.scrolling_area.setStyleSheet("background-color: rgb(255,110,43)")
         self.layout_for_frame.addWidget(self.scrolling_area)
         
 
@@ -349,9 +407,10 @@ class BrazzersManualMainWindow(QWidget):
         self.comboboxes_complete_layout.addLayout(self.load_play_and_close_button_layout)
         self.comboboxes_complete_layout.addLayout(self.search_df_layout)
         self.comboboxes_complete_layout.addLayout(self.summary_layout)
-        self.comboboxes_complete_layout.addLayout(self.text_statements_layout)
+        self.comboboxes_complete_layout.addLayout(self.summary_resolution)
+        # self.comboboxes_complete_layout.addLayout(self.text_statements_layout)
         self.comboboxes_complete_layout.addLayout(self.layout_for_frame)
-
+        self.comboboxes_complete_layout.addLayout(self.summary_resolution_overview_layout)
         #% Add both layout to the brazzers_table_and_comboxes_layout
         self.brazzers_table_and_comboxes_layout.addLayout(self.brazzers_table_layout)
         self.brazzers_table_and_comboxes_layout.addLayout(self.comboboxes_complete_layout)
@@ -378,6 +437,22 @@ class BrazzersManualMainWindow(QWidget):
         # self.setCentralWidget(dummy_widget)
         self.setLayout(self.complete_layout)
         
+    def set_dark_mode(self):
+        app.setStyle(QStyleFactory.create("Fusion"))
+        palette = self.palette()
+        palette.setColor(palette.Window, QColor(53, 53, 53))
+        palette.setColor(palette.WindowText, QColor(QtCore.Qt.white))
+        palette.setColor(palette.Base, QColor(25, 25, 25))
+        palette.setColor(palette.AlternateBase, QColor(53, 53, 53))
+        palette.setColor(palette.ToolTipBase, QtCore.Qt.white)
+        palette.setColor(palette.ToolTipText, QtCore.Qt.white)
+        palette.setColor(palette.Text, QtCore.Qt.white)
+        palette.setColor(palette.Button, QColor(53, 53, 53))
+        palette.setColor(palette.ButtonText, QtCore.Qt.white)
+        palette.setColor(palette.BrightText, QtCore.Qt.red)
+        palette.setColor(palette.Highlight, QColor(142, 45, 197))
+        palette.setColor(palette.HighlightedText, QtCore.Qt.black)
+        self.setPalette(palette)
 
     #% Define the methods of the buttons etc....
 
@@ -401,6 +476,10 @@ class BrazzersManualMainWindow(QWidget):
         print(f"Loading {csv_file} ... ")
         self.loaded_csv_df = pd.read_csv(csv_file)
         # print(self.loaded_csv_df.head())
+
+        self.loaded_csv_df_head = self.loaded_csv_df.head()
+        # self.loaded_csv_df_head.style.applymap(self._color_red_or_green)
+
 
         self.brazzers_table.setColumnWidth(0, 50)
         self.brazzers_table.setColumnWidth(1, 130)
@@ -435,7 +514,7 @@ class BrazzersManualMainWindow(QWidget):
         self.site_list_sorted = [lf.lstrip() for lf in self.site_list_sorted]
         self.site_list_sorted.insert(0, "== All Sites ==")
 
-        self.combobox_site.setStyleSheet('color: rgb(255, 255, 255);')
+        # self.combobox_site.setStyleSheet('color: rgb(5, 255, 255);')
         for lf, i in zip(self.site_list_sorted, range(len(self.site_list_sorted)+1)):
             self.combobox_site.addItem(lf)
             self.combobox_site.setItemData(i, Qt.AlignRight)
@@ -455,7 +534,7 @@ class BrazzersManualMainWindow(QWidget):
         self.ps1_list_sorted.insert(0, "== All PS1 ==")
         # for lf in sorted(self.ps1_list_sorted):
         #     self.combobox_PS1.addItem(lf)  
-        self.combobox_PS1.setStyleSheet('color: rgb(255, 255, 255);')
+        # self.combobox_PS1.setStyleSheet('color: rgb(255, 255, 255);')
         for lf, i_ps1 in zip(self.ps1_list_sorted, range(len(self.ps1_list_sorted)+1)):
             self.combobox_PS1.addItem(lf)    
             self.combobox_PS1.setItemData(i_ps1, Qt.AlignHCenter)
@@ -467,7 +546,7 @@ class BrazzersManualMainWindow(QWidget):
         self.ps2_list_sorted = sorted(list(self.ps2_list_unique))
         self.ps2_list_sorted = [lf.lstrip() for lf in self.ps2_list_sorted]
         self.ps2_list_sorted.insert(0, "== All PS2 ==")
-        self.combobox_PS2.setStyleSheet('color: rgb(255, 255, 255);')
+        # self.combobox_PS2.setStyleSheet('color: rgb(255, 255, 255);')
 
         for lf in sorted(self.ps2_list_sorted):
             self.combobox_PS2.addItem(lf)  
@@ -482,6 +561,12 @@ class BrazzersManualMainWindow(QWidget):
         # self.combobox_title.setFixedWidth(160)
 
         # rows = 0
+
+    def _color_red_or_green(val):
+        color = 'red' if 'Alexis Ford' in val else 'green'
+        return 'color: %s' % color
+    
+
 
     def cell_was_clicked(self, row, column):
         # print("Row %d and Column %d was clicked" % (row, column))
@@ -498,7 +583,7 @@ class BrazzersManualMainWindow(QWidget):
         # print('Selected site: \n', self.selected_site_for_picture)
         # print('Selected title: \n', self.selected_title)
         self.link_text.setText(self.selected_file)
-        self.link_text.setStyleSheet('color: rgb(255, 255, 255);')
+        # self.link_text.setStyleSheet('color: rgb(255, 255, 255);')
         name_tmp = self.selected_site_for_picture.replace(" ", "_").lower() + ".png"
         path_folder_site_pictures = "/Users/joerg/repos/braz/site_pictures"
         path_to_picture = os.path.join(path_folder_site_pictures, name_tmp)
@@ -578,6 +663,26 @@ class BrazzersManualMainWindow(QWidget):
         print('selected: theme: ', self.combobox_change_theme.currentText())
 
 
+    def filter_resolution(self):
+        # self.df_all_resolutions = self.loaded_csv_df
+        self.actual_resolution = self.sender().text()
+        if self.actual_resolution != "All":
+            self.search_string = self.actual_resolution
+
+            self.brazzers_table.setRowCount(0)
+            self.df = self.loaded_csv_df
+            mask = (self.df.applymap(lambda x: isinstance(x, str) and self.search_string in x)).any(1)
+            self.filtered_df = self.df[mask]
+            self.fill_brazzers_table(self.filtered_df)
+            # #print('mask: ', dataFrame[mask]['Title'])
+            print('filtered df: ', self.df[mask])
+        else:
+            self.brazzers_table.setRowCount(0)
+            self.fill_brazzers_table(self.loaded_csv_df)
+
+
+        # print(f"Pressed resolution: {}")
+
     def play_file(self):
         subprocess.call(['open', self.selected_file])
 
@@ -590,9 +695,7 @@ class BrazzersManualMainWindow(QWidget):
         palette = QPalette()
         # self.brazzers_table.item(rows, num).setPalette(palette)
 
-        
-
-# Setzen Sie die Hintergrundfarbe des QTableWidgetItem
+        # Setzen Sie die Hintergrundfarbe des QTableWidgetItem
         
 
         #% Filling the table with the content of the csv-file
@@ -602,34 +705,21 @@ class BrazzersManualMainWindow(QWidget):
             for num, data in enumerate(columns):
                 self.brazzers_table.setItem(rows, num, QTableWidgetItem(str(data)))
 
-                if rows == 3 and num == 2:
-                    self.brazzers_table.item(rows, num).setBackground(QColor(255,210,43))
-                    self.brazzers_table.item(rows, num).setForeground(QColor(12,210,43))
+                if "_720p" in str(data):
+                # if rows == 3 and num == 2:
+                    # color = QColor("red")
+                    # QTableWidgetItem(str(data)).setForeground(QColor("red"))
+                    # self.brazzers_table.item(rows, num).setBackground(QColor(255,210,43))
+                    # self.brazzers_table.item(rows, num).setForeground(QColor(12,210,43))
                     # Wenden Sie die Palette auf das QTableWidgetItem an
-                    
-                    self.brazzers_table.item(rows, num).setBackground(color)
-                    # Deaktivieren Sie setAutoFillBackground
-                    # self.brazzers_table.item(rows, num).setAutoFillBackground(False)
+                    # print(f"Row-number: {rows}, Column-number: {num}")
+                    self.brazzers_table.item(rows, 0).setBackground(QColor(191, 141, 3))        
+                elif "_1080p" in str(data):
+                    # self.brazzers_table.item(rows, 0).setBackground(QColor(2, 166, 191))
+                    self.brazzers_table.item(rows, 0).setBackground(QColor(91, 235, 2))
+                elif "_480p" in str(data):
+                    self.brazzers_table.item(rows, 0).setBackground(QColor(130, 5, 105))
 
-                    # Wiederherstellen der Standardpalette des QTableWidgetItem
-                    # palette = self.brazzers_table.item(rows, num).palette()
-                    # self.brazzers_table.item(rows, num).setPalette(palette)
-
-                    # self.brazzers_table.item.setProperty('cool', True)
-                    # self.brazzers_table.item(rows, num).setProperty('class', 'success') # (QColor(extra["warning"]))
-        # self.brazzers_table.setItem(3, 5, QTableWidgetItem())
-        # self.brazzers_table.item(3, 5).setBackground(QColor(255,210,43)) 
-        # self.brazzers_table.setBackground(QColor(palette["green"]))
-
-        
-        # self.brazzers_table.setStyleSheet("")
-        # self.brazzers_table.setStyleSheet("QTableWidgetItem {foreground-color: green; color: red;}")
-        # item = QTableWidgetItem('black')
-        # item.setBackgroundColor(QColor(255,210,43))
-        # item.setForeground(QColor(255, 155, 255))
-        # item.setBackgroundColor(QColor(230,230,250))
-        
-        
 
         # item.setForeground(QBrush(QColor("blue")))
         # self.brazzers_table.setItem(3, 2, item)
@@ -947,8 +1037,9 @@ class RuntimeStylesheets(BrazzersManualMainWindow, QtStyleTools):
         # self.apply_stylesheet(self.main, 'dark_amber.xml', extra=extra)
 
         # self.main.btn_change_theme.clicked.connect(lambda: self.apply_stylesheet(self.main, 'dark_teal.xml'))
-        apply_stylesheet(app, theme='dark_teal.xml', extra=extra1)
-        self.main.combobox_change_theme.currentTextChanged.connect(lambda: self.apply_stylesheet(self.main, self.main.combobox_change_theme.currentText(), extra=extra1))
+        
+        # apply_stylesheet(app, theme='dark_teal.xml', extra=extra1)
+        # self.main.combobox_change_theme.currentTextChanged.connect(lambda: self.apply_stylesheet(self.main, self.main.combobox_change_theme.currentText(), extra=extra1))
         # self.main.btn_change_theme.clicked.connect(lambda: self.apply_stylesheet(self.main, 'light_red.xml', extra=extra2))
         # # self.main.pushButton_3.clicked.connect(lambda: self.apply_stylesheet(self.main, 'light_blue.xml', extra={'font_family': 'Raleway', }))
         # # self.apply_stylesheet(self.main, 'light_red.xml')
@@ -963,12 +1054,12 @@ class RuntimeStylesheets(BrazzersManualMainWindow, QtStyleTools):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    QFontDatabase.addApplicationFont('Raleway-Regular.ttf')
-    frame = RuntimeStylesheets()
-    frame.main.show()
+    # QFontDatabase.addApplicationFont('Raleway-Regular.ttf')
+    # frame = RuntimeStylesheets()
+    # frame.main.show()
     
     # apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False, extra=extra)
-    # window = BrazzersManualMainWindow(200, 330, 800)
+    window = BrazzersManualMainWindow()
     # window = window = BrazzersManualMainWindow()
-    # window.show()
+    window.show()
     sys.exit(app.exec_())
