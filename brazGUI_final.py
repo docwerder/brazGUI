@@ -60,7 +60,7 @@ from PySide2.QtWidgets import (
     QApplication, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QTableView,
     QMainWindow, QWidget, QPushButton, QComboBox, QLabel, QListWidget, QTableWidget,
     QFileDialog, QFrame, QMessageBox, QTableWidgetItem, QStyle, QPlainTextEdit, QCheckBox,
-    QScrollArea, QHeaderView, QStyleFactory
+    QScrollArea, QHeaderView, QStyleFactory, QTextEdit
 )
 from PySide2.QtGui import QFont
 #from emat_mfl_combined.applications.pdw_upload.analysis_tools.path2proj import Path2ProjAnomaliesGeneral
@@ -360,14 +360,15 @@ class BrazzersManualMainWindow(QWidget):
 
         self.summary_resolution_overview_layout = QVBoxLayout()
         self.single_resolution_layout = QHBoxLayout()
-        self.overview_1080p_resolution = QPlainTextEdit("1080p Overview")
+        self.overview_1080p_resolution = QTextEdit("1080p Overview")
         # self.overview_1080p_resolution.setFixedWidth(200)
-        self.overview_720p_resolution = QPlainTextEdit("720p Overview")
-        self.overview_480p_resolution = QPlainTextEdit("480p Overview")
-        self.overview_360p_resolution = QPlainTextEdit("360p Overview")
+        self.overview_720p_resolution = QTextEdit("720p Overview")
+        self.overview_480p_resolution = QTextEdit("480p Overview")
+        self.overview_360p_resolution = QTextEdit("360p Overview")
 
-        self.overview_all_resolutions = QPlainTextEdit("All Overview")
-
+        self.overview_all_resolutions = QTextEdit("All Overview")
+        # self.overview_all_resolutions.setPlainText("Heavy..")
+        
 
         self.single_resolution_layout.addWidget(self.overview_1080p_resolution)
         self.single_resolution_layout.addWidget(self.overview_720p_resolution)
@@ -671,14 +672,21 @@ class BrazzersManualMainWindow(QWidget):
 
             self.brazzers_table.setRowCount(0)
             self.df = self.loaded_csv_df
-            mask = (self.df.applymap(lambda x: isinstance(x, str) and self.search_string in x)).any(1)
+            mask = (self.df.applymap(lambda x: isinstance(x, str) and self.search_string in x)).any(axis=1)
             self.filtered_df = self.df[mask]
             self.fill_brazzers_table(self.filtered_df)
+            overall_ctn_df = "Ctn of df"
+            value_of_ctn_df = len(self.filtered_df)
+            self.overview_1080p_resolution.append(f"{overall_ctn_df} \t {value_of_ctn_df}")
             # #print('mask: ', dataFrame[mask]['Title'])
             print('filtered df: ', self.df[mask])
         else:
             self.brazzers_table.setRowCount(0)
             self.fill_brazzers_table(self.loaded_csv_df)
+            self.overview_all_resolutions.clear()
+            overall_ctn_df = "Ctn of df"
+            value_of_ctn_df = len(self.loaded_csv_df)
+            self.overview_all_resolutions.append(f"{overall_ctn_df} \t {value_of_ctn_df}")
 
 
         # print(f"Pressed resolution: {}")
@@ -845,7 +853,7 @@ class BrazzersManualMainWindow(QWidget):
         self.df = self.loaded_csv_df
         # self.df = df
         # self.search_string = search_string!
-        mask = (self.df.applymap(lambda x: isinstance(x, str) and self.search_string in x)).any(1)
+        mask = (self.df.applymap(lambda x: isinstance(x, str) and self.search_string in x)).any(axis=1)
         self.filtered_df = self.df[mask]
         self.fill_brazzers_table(self.filtered_df)
         # #print('mask: ', dataFrame[mask]['Title'])
