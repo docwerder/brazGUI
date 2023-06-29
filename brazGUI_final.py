@@ -16,6 +16,7 @@ from qt_material import apply_stylesheet
 from PySide2.QtGui import QFontDatabase
 from PySide2.QtGui import QColor
 from PySide2.QtCore import Qt
+from typing import Optional
 
 extra1 = {
     # Button colors
@@ -86,21 +87,37 @@ class BrazzersManualMainWindow(QWidget):
     #     self.y_pos_parent_window = y_pos_parent_window
     #     self.width_parent_window = width_parent_window
     #     self.init_ui()
-    def __init__(self):
+    def __init__(self, loaded_csv_df: Optional[pd.DataFrame] = None) -> None:
         super().__init__()
+
+        if loaded_csv_df is None:
+            self.loaded_csv_df = None
+        else:
+            self.loaded_csv_df = loaded_csv_df
+            
+        #     # self.site_list_unique = self.loaded_csv_df['Site'].unique()     
+        #     # self.site_list_sorted = sorted(list(self.site_list_unique))
+        #     # self.site_list_sorted = [lf.lstrip() for lf in self.site_list_sorted]
+        #     # self.site_list_sorted.insert(0, "== All Sites ==")
+        #     # self.brazzers_table.setRowCount(0)
+        #     # self.selected_site = self.combobox_site.currentText()
+        #     self.fill_brazzers_site(self.loaded_csv_df)
+            
+                
+            
+
+
         self.init_ui() 
 
 
     def init_ui(self) -> None:
 
-        self.setWindowTitle("BRAZZERS - Manual Edition V0.5!")
+        self.setWindowTitle("BRAZZERS - Manual Edition V0.6!")
         self.resize(1500, 1000)
-        # 
         # 
         self.move(200, 0) #widht, height
         
         self.set_dark_mode()
-
         
         ### Define the layout ####
         
@@ -166,9 +183,13 @@ class BrazzersManualMainWindow(QWidget):
         header.setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)
         # self.brazzers_table.resize(1000, 500)
         self.brazzers_table.setFixedWidth(1000)
+        self.fill_brazzers_table(self.loaded_csv_df)
+        
+        
         #% Define the function which his executed, when cell was clicked !
         self.brazzers_table.cellClicked.connect(self.cell_was_clicked)
 
+        
         self.brazzers_table_layout.addWidget(self.brazzers_table)
 
         #% ComboBoxes_layout
@@ -183,9 +204,12 @@ class BrazzersManualMainWindow(QWidget):
         self.site_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
         self.combobox_site = QComboBox()
         self.combobox_site.setFixedWidth(335)
+        self.fill_brazzers_site(self.loaded_csv_df)
         
         self.site_layout.addWidget(self.site_label)
         self.site_layout.addWidget(self.combobox_site)
+        # self.fill_brazzers_site(self.loaded_csv_df)
+        # self.combobox_site.currentTextChanged.connect(self.site_changed)
 
 
         #% Layout for the TopPS, NEW: MultiCombobox
@@ -259,7 +283,7 @@ class BrazzersManualMainWindow(QWidget):
         self.play_button.setProperty('class', 'danger')
         self.play_button.setFixedWidth(120)
         self.play_button.clicked.connect(self.play_file)
-        self.close_button = QPushButton("Close APP")
+        self.close_button = QPushButton("Close App")
         self.close_button.setFixedWidth(120)
         self.close_button.clicked.connect(self.close)
         self.connect_to_werderNAS_button = QPushButton("Connect")
@@ -437,12 +461,22 @@ class BrazzersManualMainWindow(QWidget):
         # dummy_widget.setLayout(self.complete_layout)
         # self.setCentralWidget(dummy_widget)
         self.setLayout(self.complete_layout)
+
+        
+            
+        #     # self.site_list_unique = self.loaded_csv_df['Site'].unique()     
+        #     # self.site_list_sorted = sorted(list(self.site_list_unique))
+        #     # self.site_list_sorted = [lf.lstrip() for lf in self.site_list_sorted]
+        #     # self.site_list_sorted.insert(0, "== All Sites ==")
+        #     # self.brazzers_table.setRowCount(0)
+        #     # self.selected_site = self.combobox_site.currentText()
+        #     self.fill_brazzers_site(self.loaded_csv_df)
         
     def set_dark_mode(self):
         app.setStyle(QStyleFactory.create("Fusion"))
         palette = self.palette()
         palette.setColor(palette.Window, QColor(53, 53, 53))
-        palette.setColor(palette.WindowText, QColor(QtCore.Qt.white))
+        palette.setColor(palette.WindowText, QColor(QtCore.Qt.green))
         palette.setColor(palette.Base, QColor(25, 25, 25))
         palette.setColor(palette.AlternateBase, QColor(53, 53, 53))
         palette.setColor(palette.ToolTipBase, QtCore.Qt.white)
@@ -451,8 +485,11 @@ class BrazzersManualMainWindow(QWidget):
         palette.setColor(palette.Button, QColor(53, 53, 53))
         palette.setColor(palette.ButtonText, QtCore.Qt.white)
         palette.setColor(palette.BrightText, QtCore.Qt.red)
-        palette.setColor(palette.Highlight, QColor(142, 45, 197))
+        palette.setColor(palette.Highlight, QColor(142, 145, 197))
         palette.setColor(palette.HighlightedText, QtCore.Qt.black)
+        palette.setColor(palette.Disabled, palette.Text, QtCore.Qt.darkGray)
+        palette.setColor(palette.Disabled, palette.ButtonText, QtCore.Qt.darkGray)
+
         self.setPalette(palette)
 
     #% Define the methods of the buttons etc....
@@ -471,7 +508,7 @@ class BrazzersManualMainWindow(QWidget):
 
         # csv_file = pathlib.Path(self.csv_dir) / "df_final_30_05_23.csv"
         #% Take the absolute path
-        csv_file = pathlib.Path(r"/Users/joerg/repos/brazGUI/csv_data/df_final_30_05_23.csv")
+        csv_file = pathlib.Path(r"/Users/joerg/repos/brazGUI/csv_data/df_final_19_06_23.csv")
         # csv_file = pathlib.Path(self.csv_dir) / "df_final_my_db_py_22_04_2022.csv"
         
         print(f"Loading {csv_file} ... ")
@@ -592,9 +629,12 @@ class BrazzersManualMainWindow(QWidget):
         pixmap = QPixmap(path_to_picture)
         # self..setPixmap(pixmap)
 
+    
 
     #% function for executing, when the site is changed in the combobox...
     def site_changed(self):
+       print('Going into site_changedfunction...')
+       print(f"self.loaded_csv_head: {self.loaded_csv_df.head()}")
        self.brazzers_table.setRowCount(0)
        self.selected_site = self.combobox_site.currentText()
        print('currentText_site: ', self.combobox_site.currentText())
@@ -603,16 +643,18 @@ class BrazzersManualMainWindow(QWidget):
            self.df_selected_site = self.loaded_csv_df
        else:
            self.df_selected_site = self.loaded_csv_df[self.loaded_csv_df['Site'] == self.combobox_site.currentText()].sort_values(by="PS1", ascending=True)
+
         
     #    self.df_selected_site = self.loaded_csv_df[self.loaded_csv_df['Site'] == self.combobox_site.currentText()]'
        
+       print(f"self.df_selected_site_self.loaded_csv_df: {self.loaded_csv_df}")
 
-       self.fill_brazzers_table(self.df_selected_site)
-       self.output_textbox.clear()
-       displayed_text = "Site: {site}, counts: {ctn}".format(site=self.combobox_site.currentText(), ctn=len(self.df_selected_site))
+       self.fill_brazzers_table(selected_df=self.df_selected_site)
+    #    self.output_textbox.clear()
+    #    displayed_text = "Site: {site}, counts: {ctn}".format(site=self.combobox_site.currentText(), ctn=len(self.df_selected_site))
 
-       self.output_textbox.appendPlainText(displayed_text)
-       self.show_brazzers_site_logo(self.selected_site)   
+    #    self.output_textbox.appendPlainText(displayed_text)
+    #    self.show_brazzers_site_logo(self.selected_site)   
 
 
     #% function for executing, when the PS1 is changed in the combobox...
@@ -650,10 +692,6 @@ class BrazzersManualMainWindow(QWidget):
        self.txt_ctn_selected_ps.setFont(QFont('Roboto', 15))
        self.txt_ctn_selected_ps.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
 
-
-
-
-
     #    self.df_selected_site = self.loaded_csv_df[self.loaded_csv_df['Site'] == self.combobox_site.currentText()]'
        
        self.fill_brazzers_table(self.df_selected_ps1)
@@ -684,10 +722,12 @@ class BrazzersManualMainWindow(QWidget):
             self.brazzers_table.setRowCount(0)
             self.fill_brazzers_table(self.loaded_csv_df)
             self.overview_all_resolutions.clear()
+            
+            self.overview_all_resolutions.setFont(QFont('Apple SD Gothic Neo', 15))
+            self.overview_all_resolutions.setTextColor(QColor("yellow"))
             overall_ctn_df = "Ctn of df"
             value_of_ctn_df = len(self.loaded_csv_df)
             self.overview_all_resolutions.append(f"{overall_ctn_df} \t {value_of_ctn_df}")
-
 
         # print(f"Pressed resolution: {}")
 
@@ -695,7 +735,8 @@ class BrazzersManualMainWindow(QWidget):
         subprocess.call(['open', self.selected_file])
 
     def fill_brazzers_table(self, selected_df: pd.DataFrame):
-        # self.loaded_csv_df = load_csv_df
+        
+        # self.loaded_csv_df = selected_df
         # Erstellen Sie eine QPalette-Instanz
         # Erstellen Sie eine Instanz der gewünschten Farbe
         color = QColor(extra1["success"])
@@ -705,8 +746,9 @@ class BrazzersManualMainWindow(QWidget):
 
         # Setzen Sie die Hintergrundfarbe des QTableWidgetItem
         
-
+        print('going into fill_brazzers_table_function....111')
         #% Filling the table with the content of the csv-file
+        self.brazzers_table.setRowCount(0)
         for rows, columns in selected_df.iterrows():
             rows = self.brazzers_table.rowCount()
             self.brazzers_table.insertRow(rows)
@@ -729,17 +771,60 @@ class BrazzersManualMainWindow(QWidget):
                     self.brazzers_table.item(rows, 0).setBackground(QColor(130, 5, 105))
 
 
-        # item.setForeground(QBrush(QColor("blue")))
-        # self.brazzers_table.setItem(3, 2, item)
-        # # item.setBackground(background_color)
-        # item.setForeground(QColor("red"))  
-        # self.brazzers_table.setItem(3, 2, item)
 
-        # background_color = QColor(palette.color(QPalette.Light))
-        # item.setBackground(background_color)
-        # table_widget.setItem(row, column, item)
+    def fill_brazzers_table_1(self):
+        
+        # self.loaded_csv_df = selected_df
+        # Erstellen Sie eine QPalette-Instanz
+        # Erstellen Sie eine Instanz der gewünschten Farbe
+        color = QColor(extra1["success"])
+        # Setzen Sie die Standardpalette des QTableWidgetItem zurück
+        palette = QPalette()
+        # self.brazzers_table.item(rows, num).setPalette(palette)
 
-        # print('Debug 1', selected_df)
+        # Setzen Sie die Hintergrundfarbe des QTableWidgetItem
+        
+        print('going into fill_brazzers_table_function_1....')
+        #% Filling the table with the content of the csv-file
+        self.brazzers_table.setRowCount(0)
+        for rows, columns in self.loaded_csv_df.iterrows():
+            rows = self.brazzers_table.rowCount()
+            self.brazzers_table.insertRow(rows)
+            for num, data in enumerate(columns):
+                self.brazzers_table.setItem(rows, num, QTableWidgetItem(str(data)))
+
+                if "_720p" in str(data):
+                    self.brazzers_table.item(rows, 0).setBackground(QColor(191, 141, 3))        
+                elif "_1080p" in str(data):
+                    # self.brazzers_table.item(rows, 0).setBackground(QColor(2, 166, 191))
+                    self.brazzers_table.item(rows, 0).setBackground(QColor(91, 235, 2))
+                elif "_480p" in str(data):
+                    self.brazzers_table.item(rows, 0).setBackground(QColor(130, 5, 105))
+
+    def fill_brazzers_site(self, loaded_csv_df: pd.DataFrame):
+        print(f"self.loaded_csv_df______: {self.loaded_csv_df}")
+        self.brazzers_table.setRowCount(0)
+        self.selected_site = self.combobox_site.currentText()
+        # print('currentText_site__: ', self.combobox_site.currentText())
+
+        self.site_list_unique = self.loaded_csv_df['Site'].unique()     
+        self.site_list_sorted = sorted(list(self.site_list_unique))
+        self.site_list_sorted = [lf.lstrip() for lf in self.site_list_sorted]
+        self.site_list_sorted.insert(0, "== All Sites ==")
+            
+
+        # self.combobox_site.setStyleSheet('color: rgb(5, 255, 255);')
+        for lf, i in zip(self.site_list_sorted, range(len(self.site_list_sorted)+1)):
+            self.combobox_site.addItem(lf)
+            self.combobox_site.setItemData(i, Qt.AlignRight)
+        self.combobox_site.setFixedWidth(335)
+        self.combobox_site.currentTextChanged.connect(self.site_changed)
+        self.fill_brazzers_table(self.loaded_csv_df)
+        # print(f"fill_brazzers_table_site_function: {self.loaded_csv_df.head()}")
+        # if self.selected_site == "== All Sites ==":
+        #    self.df_selected_site = self.loaded_csv_df
+        # else:
+        #    self.df_selected_site = self.loaded_csv_df[self.loaded_csv_df['Site'] == self.combobox_site.currentText()].sort_values(by="PS1", ascending=True)
 
     def show_brazzers_site_logo(self, selected_site_for_picture):
             self.lbl_site_logo.hide()
@@ -1060,14 +1145,36 @@ class RuntimeStylesheets(BrazzersManualMainWindow, QtStyleTools):
 # }
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    # app = QApplication(sys.argv)
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication([])
+    
+    if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
+        app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
+    if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
+        app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+    
+    _load_csv_file_automatically = True
+
+    if _load_csv_file_automatically:
+        print(f"Loading csv_file automatically: ..")
+        _csv_file_path  = Path(
+            r"/Users/joerg/repos/brazGUI/csv_data/df_final_19_06_23.csv"
+        )
+        _df = pd.read_csv(_csv_file_path)
+    else:
+        _df = None
+
+
+    # app.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
     # QFontDatabase.addApplicationFont('Raleway-Regular.ttf')
     # frame = RuntimeStylesheets()
     # frame.main.show()
     
     # apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False, extra=extra)
-    window = BrazzersManualMainWindow()
-    # window = window = BrazzersManualMainWindow()
+    # window = BrazzersManualMainWindow()
+    window = BrazzersManualMainWindow(loaded_csv_df=_df)
     window.show()
     sys.exit(app.exec_())
