@@ -103,10 +103,6 @@ class BrazzersManualMainWindow(QWidget):
         #     # self.selected_site = self.combobox_site.currentText()
         #     self.fill_brazzers_site(self.loaded_csv_df)
             
-                
-            
-
-
         self.init_ui() 
 
 
@@ -124,43 +120,32 @@ class BrazzersManualMainWindow(QWidget):
         # Create the complete layout
         complete_layout = QVBoxLayout(self)
 
-        # Layout for brazzers_label and Site_picture
+        #% Layout for brazzers_label and Site_picture
         self.brazzers_logo_site_logo_layout = QHBoxLayout()
 
-        # Define label for brazzers_logo and site_logo. Fir st step: Default png-picture!
+        #% Define label for brazzers_logo and site_logo. Fir st step: Default png-picture!
         self.lbl_brazzers_logo = QLabel()
-        #self.lbl_brazzers_logo.setStyleSheet("font-size: 18px;" "color: rgb(44, 44, 126);")
         
         self.pixmap_brazzers = QPixmap("/Users/joerg/repos/braz/braz_manual_edition/brazzers.png")
-        # self.pixmap_brazzers = QPixmap('/Users/joerg/repos/braz/site_pictures/big_tits_in_sports.png')
-        # self.scaled_brazzers = self.pixmap_brazzers.scaled(self.lbl_brazzers_logo.size() / 6, QtCore.Qt.KeepAspectRatio)
-        # self.lbl_brazzers_logo.setPixmap(self.scaled_brazzers)
-        # self.lbl_brazzers_logo.setScaledContents(False)
-
+        
         #% Setting the values for the site_logo 
         self.lbl_site_logo = QLabel("Placeholder!!!!")
         pixmap = QPixmap("/Users/joerg/repos/braz/braz_manual_edition/zz_series.jpg")
-        # default_site_pic_path = Path(r"/Users/joerg/repos/braz/braz_manual_edition/zz_series.jpg")
-        # # site_pic_path = '/Users/joerg/repos/braz/site_pictures/big_tits_in_sports.png'
-        # self.pixmap = QPixmap(str(default_site_pic_path))
-
+        
         scaled = pixmap.scaled(self.lbl_site_logo.size() / 10, QtCore.Qt.KeepAspectRatio)
         self.lbl_site_logo.setPixmap(scaled)
         self.lbl_site_logo.setScaledContents(False)
-        # self.lbl_site_logo.hide()
-    
+        
 
         #% Fill the brazzers_and_site_logo_layout
         self.brazzers_logo_site_logo_layout.addWidget(self.lbl_brazzers_logo)
         self.brazzers_logo_site_logo_layout.addStretch(1)
         self.brazzers_logo_site_logo_layout.addWidget(self.lbl_site_logo)
 
-        #% Setting up the QTaable and the control buttons or comboboxes
+        #% Setting up the QTable and the control buttons or comboboxes
 
         #% First: Define QHBoxLayout, so that the alignment of the 
         #% table and the comboboxes are horizontal
-
-
 
         self.brazzers_table_and_comboxes_layout = QHBoxLayout()
         # self.brazzers_table_and_comboxes_layout.setContentsMargins(0, 0, 0, 0)
@@ -191,40 +176,40 @@ class BrazzersManualMainWindow(QWidget):
         
         self.brazzers_table_layout.addWidget(self.brazzers_table)
 
+        #% DEFINE CONTROL LAYOUT!!!!!!!!
         #% ComboBoxes_layout
         self.comboboxes_complete_layout = QVBoxLayout()
         self.comboboxes_complete_layout.setAlignment(Qt.AlignTop)
         
         #% Layout for the site
-        self.site_layout = QHBoxLayout()
-        # self.site_layout.addSpacing(300)
-        # self.site_layout.setAlignment(Qsortedt.AlignLeft)
+        # self.site_layout = QHBoxLayout()
+        self.site_layout = QGridLayout()
         self.site_label = QLabel("SITE: ")
-        # self.site_label.setFont(QFont('Roboto', 13))
-        # self.site_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
+        self.dummy_label1 = QLabel("")
         self.combobox_site = QComboBox()
-        #self.combobox_site.setFixedWidth(200)
-        self.site_layout.addWidget(self.site_label)
-        #self.site_layout.addSpacing(100)
-        self.site_layout.addWidget(self.combobox_site)
+        # self.combobox_site.setFixedWidth(200)
+        self.site_layout.addWidget(self.site_label, 0, 0, 1, 1)
+        # self.site_layout.addWidget(self.dummy_label1, 0, 1, 1, 1)
+
+        # self.site_layout.addSpacing(400)
+        self.site_layout.addWidget(self.combobox_site, 0, 2, 1, 2)
         self.fill_brazzers_site(self.loaded_csv_df)
         # self.combobox_site.currentTextChanged.connect(self.site_changed)
 
 
         #% Layout for the TopPS, NEW: MultiCombobox
-        self.TopPS_layout = QHBoxLayout()
+        self.TopPS_layout = QGridLayout()
+        
         # self.TopPS_layout.addSpacing(300)
         # self.PS1_layout.setAlignment(Qt.AlignLeft)
-        self.TopPS_label = QLabel("TOP PS: ")
-        # self.TopPS_label.setFont(QFont('Roboto', 13))
-        # self.TopPS_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
+        self.TopPS_label = QLabel("TOP PS:")
         self.combobox_TopPS = MultiComboBox()
         self.btn_filter_TopPS = QPushButton("Filter Top PS")
-        #elf.btn_filter_TopPS.setFixedWidth(125)
+        
         self.btn_filter_TopPS.clicked.connect(self.filter_and_show_TopPS)
-        self.TopPS_layout.addWidget(self.TopPS_label)
-        self.TopPS_layout.addWidget(self.btn_filter_TopPS)
-        self.TopPS_layout.addWidget(self.combobox_TopPS)
+        self.TopPS_layout.addWidget(self.TopPS_label, 0, 0, 1, 2)
+        self.TopPS_layout.addWidget(self.btn_filter_TopPS, 0, 1, 1, 1)
+        self.TopPS_layout.addWidget(self.combobox_TopPS, 0, 3, 1, 1)
         # self.btn_TopPS = QPushButton("== ALL Top PS ==")
         # self.btn_TopPS.clicked.connect(self.show_TopPSFilterFrame)
         
@@ -235,41 +220,31 @@ class BrazzersManualMainWindow(QWidget):
         self.TopPS = ['All_TopPS', 'Abbey Brooks', 'Abbie Cat', 'Alena Croft', 'Aletta Ocean', 'Alexis Ford', 
             'Angel Wicky', 'Angela White', 'Armani Black', 'Ava Addams', 'Bridgette B', 'Britney Shannon', 'Carmella Bing', 'Cathy Heaven', 'Chessie Kay', 'Christie Stevens', 'Claire Dames', 'Corinna Blake', 'Dee Williams', 'Diamond Foxxx', 'Donna Bell', 'Ella Hughes', 'Emma Butt', 'Eva Karera', 'Eva Notty', 'Harmony Reigns', 'Holly Halston', 'Jasmine Jae', 'Jayden Jaymes', 'Jenna Presley', 'Jessica Moore', 'Jillian Janson', 'Julia Ann', 'Katie Kox', 'Kelly Divine', 'Kendra Lust', 'Kiara Mia', 'Krissy Lynn', 'Leigh Darby', 'Madison Ivy', 'Marsha May', 'Memphis Monroe', 'Nicolette Shea', 'Nikki Benz', 'Noelle Easton', 'Peta Jensen', 'Rebeca Linares', 'Rebecca More', 'Riley Evans', 'Roberta Gemma', 'Romi Rain', 'Sarah Jessie', 'Sensual Jane', 'Shyla Stylez', 'Sienna West', 'Sophie Dee', 'Stella Cox', 
             'Syren De Mer', 'Tarra White', 'Tory Lane', 'Velicity Von', 'Veronica Avluv', 'Yasmin Scott']
+        
         self.combobox_TopPS.addItems(self.TopPS)
-        self.combobox_TopPS.setFixedWidth(200)
+        # self.combobox_TopPS.setFixedWidth(200)
+        
+
         #% Layout for the PS1
-        self.PS1_layout = QHBoxLayout()
-        # self.PS1_layout.setAlignment(Qt.AlignLeft)
-        self.PS1_label = QLabel("PS1: ")
-        self.PS1_label.setFont(QFont('Roboto', 13))
-        self.PS1_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
+        self.PS1_layout = QGridLayout()
+        self.PS1_label = QLabel("PS1:")
         self.combobox_PS1 = QComboBox()
-        self.combobox_PS1.setFixedWidth(335)
-        self.PS1_layout.addWidget(self.PS1_label)
-        self.PS1_layout.addWidget(self.combobox_PS1)
+        self.PS1_layout.addWidget(self.PS1_label, 0, 0, 1, 1)
+        self.PS1_layout.addWidget(self.combobox_PS1, 0, 2, 1, 2)
 
         #% Layout for the PS2
-        self.PS2_layout = QHBoxLayout()
-        self.PS2_label = QLabel("PS2: ")
-        self.PS2_label.setFont(QFont('Roboto', 13))
-        self.PS2_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
-        # self.PS2_layout.setAlignment(Qt.AlignLeft)
+        self.PS2_layout = QGridLayout()
+        self.PS2_label = QLabel("PS2:")
         self.combobox_PS2 = QComboBox()
-        #self.combobox_PS2.setFixedWidth(335)
-        self.PS2_layout.addWidget(self.PS2_label)
-        # self.PS2_layout.stretch(1)
-        self.PS2_layout.addWidget(self.combobox_PS2)
+        self.PS2_layout.addWidget(self.PS2_label, 0, 0, 1, 1)
+        self.PS2_layout.addWidget(self.combobox_PS2, 0, 2, 1, 2)
 
         #% Layout for the Title
-        self.title_layout = QHBoxLayout()
-        self.title_label = QLabel("Title: ")
-        self.title_label.setFont(QFont('Roboto', 13))
-        self.title_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
-        # self.title_layout.setAlignment(Qt.AlignLeft)
+        self.title_layout = QGridLayout()
+        self.title_label = QLabel("Title:")
         self.combobox_title = QComboBox()
-        #self.combobox_title.setFixedWidth(335)
-        self.title_layout.addWidget(self.title_label)
-        self.title_layout.addWidget(self.combobox_title)
+        self.title_layout.addWidget(self.title_label, 0, 0, 1, 1)
+        self.title_layout.addWidget(self.combobox_title, 0, 2, 1, 2)
 
         #% Layout for load_and_play_buttons
         self.load_play_and_close_button_layout = QHBoxLayout()
@@ -423,12 +398,7 @@ class BrazzersManualMainWindow(QWidget):
 
 
         #% Add the single components to the layout
-        self.comboboxes_complete_layout.addLayout(self.site_layout)
-        self.comboboxes_complete_layout.addLayout(self.site_layout)
-        self.comboboxes_complete_layout.addLayout(self.site_layout)
-        self.comboboxes_complete_layout.addLayout(self.site_layout)
-        self.comboboxes_complete_layout.addLayout(self.site_layout)
-        self.comboboxes_complete_layout.addLayout(self.site_layout)
+        self.comboboxes_complete_layout.addLayout(self.brazzers_logo_site_logo_layout)
         self.comboboxes_complete_layout.addLayout(self.site_layout)
         self.comboboxes_complete_layout.addLayout(self.TopPS_layout)
         self.comboboxes_complete_layout.addLayout(self.PS1_layout)
@@ -452,11 +422,11 @@ class BrazzersManualMainWindow(QWidget):
        
 
         #% Add Label for the display of the complete link below the qtable
-        # self.complete_link_layout = QHBoxLayout()
-        # self.link_label = QLabel("Link: ")
-        # self.link_text = QLineEdit("")
-        # self.complete_link_layout.addWidget(self.link_label)
-        # self.complete_link_layout.addWidget(self.link_text)
+        self.complete_link_layout = QHBoxLayout()
+        self.link_label = QLabel("Link: ")
+        self.link_text = QLineEdit("")
+        self.complete_link_layout.addWidget(self.link_label)
+        self.complete_link_layout.addWidget(self.link_text)
 
 
         # Set the hand-made complete layout in a superordinate QWidget called dummy_widget
@@ -468,7 +438,7 @@ class BrazzersManualMainWindow(QWidget):
         # complete_layout.setStretch(0, 7)
         # complete_layout.setStretch(1, 1)#
         # self.complete_layout.addStretch(1)
-        # self.complete_layout.addLayout(self.complete_link_layout)
+        complete_layout.addLayout(self.complete_link_layout)
         
         # dummy_widget.setLayout(self.complete_layout)
         # self.setCentralWidget(dummy_widget)
@@ -562,13 +532,13 @@ class BrazzersManualMainWindow(QWidget):
         self.site_list_unique = self.loaded_csv_df['Site'].unique()
         self.site_list_sorted = sorted(list(self.site_list_unique))
         self.site_list_sorted = [lf.lstrip() for lf in self.site_list_sorted]
-        self.site_list_sorted.insert(0, "== All Sites ==")
+        self.site_list_sorted.insert(0, "== All Sites11 ==")
 
         # self.combobox_site.setStyleSheet('color: rgb(5, 255, 255);')
         for lf, i in zip(self.site_list_sorted, range(len(self.site_list_sorted)+1)):
             self.combobox_site.addItem(lf)
             self.combobox_site.setItemData(i, Qt.AlignRight)
-        self.combobox_site.setFixedWidth(335)
+        # self.combobox_site.setFixedWidth(335)
         self.combobox_site.currentTextChanged.connect(self.site_changed)
 
 
@@ -800,7 +770,7 @@ class BrazzersManualMainWindow(QWidget):
         for lf, i in zip(self.site_list_sorted, range(len(self.site_list_sorted)+1)):
             self.combobox_site.addItem(lf)
             self.combobox_site.setItemData(i, Qt.AlignRight)
-        self.combobox_site.setFixedWidth(335)
+        # self.combobox_site.setFixedWidth(335)
         self.combobox_site.currentTextChanged.connect(self.site_changed)
         self.fill_brazzers_table(self.loaded_csv_df)
         # print(f"fill_brazzers_table_site_function: {self.loaded_csv_df.head()}")
