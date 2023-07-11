@@ -61,7 +61,7 @@ from PySide2.QtWidgets import (
     QApplication, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QTableView,
     QMainWindow, QWidget, QPushButton, QComboBox, QLabel, QListWidget, QTableWidget,
     QFileDialog, QFrame, QMessageBox, QTableWidgetItem, QStyle, QPlainTextEdit, QCheckBox,
-    QScrollArea, QHeaderView, QStyleFactory, QTextEdit
+    QScrollArea, QHeaderView, QStyleFactory, QTextEdit, QSizePolicy
 )
 from PySide2.QtGui import QFont
 #from emat_mfl_combined.applications.pdw_upload.analysis_tools.path2proj import Path2ProjAnomaliesGeneral
@@ -122,7 +122,7 @@ class BrazzersManualMainWindow(QWidget):
         ### Define the layout ####
         
         # Create the complete layout
-        self.complete_layout = QVBoxLayout()
+        complete_layout = QVBoxLayout(self)
 
         # Layout for brazzers_label and Site_picture
         self.brazzers_logo_site_logo_layout = QHBoxLayout()
@@ -182,33 +182,32 @@ class BrazzersManualMainWindow(QWidget):
 
         header.setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)
         # self.brazzers_table.resize(1000, 500)
-        self.brazzers_table.setFixedWidth(1000)
+        #self.brazzers_table.setFixedWidth(1000)
         self.fill_brazzers_table(self.loaded_csv_df)
         
         
         #% Define the function which his executed, when cell was clicked !
         self.brazzers_table.cellClicked.connect(self.cell_was_clicked)
-
         
         self.brazzers_table_layout.addWidget(self.brazzers_table)
 
         #% ComboBoxes_layout
         self.comboboxes_complete_layout = QVBoxLayout()
+        self.comboboxes_complete_layout.setAlignment(Qt.AlignTop)
         
         #% Layout for the site
         self.site_layout = QHBoxLayout()
         # self.site_layout.addSpacing(300)
         # self.site_layout.setAlignment(Qsortedt.AlignLeft)
         self.site_label = QLabel("SITE: ")
-        self.site_label.setFont(QFont('Roboto', 13))
-        self.site_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
+        # self.site_label.setFont(QFont('Roboto', 13))
+        # self.site_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
         self.combobox_site = QComboBox()
-        self.combobox_site.setFixedWidth(335)
-        self.fill_brazzers_site(self.loaded_csv_df)
-        
+        #self.combobox_site.setFixedWidth(200)
         self.site_layout.addWidget(self.site_label)
+        #self.site_layout.addSpacing(100)
         self.site_layout.addWidget(self.combobox_site)
-        # self.fill_brazzers_site(self.loaded_csv_df)
+        self.fill_brazzers_site(self.loaded_csv_df)
         # self.combobox_site.currentTextChanged.connect(self.site_changed)
 
 
@@ -217,11 +216,11 @@ class BrazzersManualMainWindow(QWidget):
         # self.TopPS_layout.addSpacing(300)
         # self.PS1_layout.setAlignment(Qt.AlignLeft)
         self.TopPS_label = QLabel("TOP PS: ")
-        self.TopPS_label.setFont(QFont('Roboto', 13))
-        self.TopPS_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
+        # self.TopPS_label.setFont(QFont('Roboto', 13))
+        # self.TopPS_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
         self.combobox_TopPS = MultiComboBox()
         self.btn_filter_TopPS = QPushButton("Filter Top PS")
-        self.btn_filter_TopPS.setFixedWidth(125)
+        #elf.btn_filter_TopPS.setFixedWidth(125)
         self.btn_filter_TopPS.clicked.connect(self.filter_and_show_TopPS)
         self.TopPS_layout.addWidget(self.TopPS_label)
         self.TopPS_layout.addWidget(self.btn_filter_TopPS)
@@ -256,7 +255,7 @@ class BrazzersManualMainWindow(QWidget):
         self.PS2_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
         # self.PS2_layout.setAlignment(Qt.AlignLeft)
         self.combobox_PS2 = QComboBox()
-        self.combobox_PS2.setFixedWidth(335)
+        #self.combobox_PS2.setFixedWidth(335)
         self.PS2_layout.addWidget(self.PS2_label)
         # self.PS2_layout.stretch(1)
         self.PS2_layout.addWidget(self.combobox_PS2)
@@ -268,7 +267,7 @@ class BrazzersManualMainWindow(QWidget):
         self.title_label.setStyleSheet("color: rgb(255,210,43);font-weight: bold;")
         # self.title_layout.setAlignment(Qt.AlignLeft)
         self.combobox_title = QComboBox()
-        self.combobox_title.setFixedWidth(335)
+        #self.combobox_title.setFixedWidth(335)
         self.title_layout.addWidget(self.title_label)
         self.title_layout.addWidget(self.combobox_title)
 
@@ -277,22 +276,22 @@ class BrazzersManualMainWindow(QWidget):
         # self.load_play_and_close_button_layout.addSpacing(300)
         self.load_button = QPushButton("Load csv-file")
         # self.load_button.setProperty('class', 'success')
-        self.load_button.setFixedWidth(120)
+        #self.load_button.setFixedWidth(120)
         self.load_button.clicked.connect(self.load_csv_file)
         self.play_button = QPushButton("Play file")
         self.play_button.setProperty('class', 'danger')
-        self.play_button.setFixedWidth(120)
+        #self.play_button.setFixedWidth(120)
         self.play_button.clicked.connect(self.play_file)
         self.close_button = QPushButton("Close App")
-        self.close_button.setFixedWidth(120)
+        #self.close_button.setFixedWidth(120)
         self.close_button.clicked.connect(self.close)
         self.connect_to_werderNAS_button = QPushButton("Connect")
-        self.connect_to_werderNAS_button.setFixedWidth(120)
+        #self.connect_to_werderNAS_button.setFixedWidth(120)
         self.connect_to_werderNAS_button.clicked.connect(self.connect_to_WerderNAS)
         self.btn_change_theme = QPushButton("Change Theme")
-        self.btn_change_theme.setFixedWidth(120)
+        #self.btn_change_theme.setFixedWidth(120)
         self.combobox_change_theme = QComboBox()
-        self.combobox_change_theme.setFixedWidth(200)
+        #elf.combobox_change_theme.setFixedWidth(200)
         # self.combobox_change_theme.setStyleSheet('color: rgb(255, 255, 255);')
     
         #% Filling the ComboBox "change_theme"
@@ -425,6 +424,12 @@ class BrazzersManualMainWindow(QWidget):
 
         #% Add the single components to the layout
         self.comboboxes_complete_layout.addLayout(self.site_layout)
+        self.comboboxes_complete_layout.addLayout(self.site_layout)
+        self.comboboxes_complete_layout.addLayout(self.site_layout)
+        self.comboboxes_complete_layout.addLayout(self.site_layout)
+        self.comboboxes_complete_layout.addLayout(self.site_layout)
+        self.comboboxes_complete_layout.addLayout(self.site_layout)
+        self.comboboxes_complete_layout.addLayout(self.site_layout)
         self.comboboxes_complete_layout.addLayout(self.TopPS_layout)
         self.comboboxes_complete_layout.addLayout(self.PS1_layout)
         self.comboboxes_complete_layout.addLayout(self.PS2_layout)
@@ -436,31 +441,38 @@ class BrazzersManualMainWindow(QWidget):
         # self.comboboxes_complete_layout.addLayout(self.text_statements_layout)
         self.comboboxes_complete_layout.addLayout(self.layout_for_frame)
         self.comboboxes_complete_layout.addLayout(self.summary_resolution_overview_layout)
+        
+        
         #% Add both layout to the brazzers_table_and_comboxes_layout
-        self.brazzers_table_and_comboxes_layout.addLayout(self.brazzers_table_layout)
+        
         self.brazzers_table_and_comboxes_layout.addLayout(self.comboboxes_complete_layout)
-
+        self.brazzers_table_and_comboxes_layout.setStretch(0, 3)
+        self.brazzers_table_and_comboxes_layout.addLayout(self.brazzers_table_layout)
+        self.brazzers_table_and_comboxes_layout.setStretch(1, 7)
+       
 
         #% Add Label for the display of the complete link below the qtable
-        self.complete_link_layout = QHBoxLayout()
-        self.link_label = QLabel("Link: ")
-        self.link_text = QLineEdit("")
-        self.complete_link_layout.addWidget(self.link_label)
-        self.complete_link_layout.addWidget(self.link_text)
+        # self.complete_link_layout = QHBoxLayout()
+        # self.link_label = QLabel("Link: ")
+        # self.link_text = QLineEdit("")
+        # self.complete_link_layout.addWidget(self.link_label)
+        # self.complete_link_layout.addWidget(self.link_text)
 
 
         # Set the hand-made complete layout in a superordinate QWidget called dummy_widget
         # dummy_widget = QWidget()
         
-        self.complete_layout.addLayout(self.brazzers_logo_site_logo_layout)
-        self.complete_layout.setSpacing(10)
-        self.complete_layout.addLayout(self.brazzers_table_and_comboxes_layout)#
-        self.complete_layout.addStretch(1)
-        self.complete_layout.addLayout(self.complete_link_layout)
+        # self.complete_layout.addLayout(self.brazzers_logo_site_logo_layout)
+        # self.complete_layout.setSpacing(10)
+        complete_layout.addLayout(self.brazzers_table_and_comboxes_layout)
+        # complete_layout.setStretch(0, 7)
+        # complete_layout.setStretch(1, 1)#
+        # self.complete_layout.addStretch(1)
+        # self.complete_layout.addLayout(self.complete_link_layout)
         
         # dummy_widget.setLayout(self.complete_layout)
         # self.setCentralWidget(dummy_widget)
-        self.setLayout(self.complete_layout)
+        #self.setLayout(complete_layout)
 
         
             
@@ -772,35 +784,6 @@ class BrazzersManualMainWindow(QWidget):
 
 
 
-    def fill_brazzers_table_1(self):
-        
-        # self.loaded_csv_df = selected_df
-        # Erstellen Sie eine QPalette-Instanz
-        # Erstellen Sie eine Instanz der gewünschten Farbe
-        color = QColor(extra1["success"])
-        # Setzen Sie die Standardpalette des QTableWidgetItem zurück
-        palette = QPalette()
-        # self.brazzers_table.item(rows, num).setPalette(palette)
-
-        # Setzen Sie die Hintergrundfarbe des QTableWidgetItem
-        
-        print('going into fill_brazzers_table_function_1....')
-        #% Filling the table with the content of the csv-file
-        self.brazzers_table.setRowCount(0)
-        for rows, columns in self.loaded_csv_df.iterrows():
-            rows = self.brazzers_table.rowCount()
-            self.brazzers_table.insertRow(rows)
-            for num, data in enumerate(columns):
-                self.brazzers_table.setItem(rows, num, QTableWidgetItem(str(data)))
-
-                if "_720p" in str(data):
-                    self.brazzers_table.item(rows, 0).setBackground(QColor(191, 141, 3))        
-                elif "_1080p" in str(data):
-                    # self.brazzers_table.item(rows, 0).setBackground(QColor(2, 166, 191))
-                    self.brazzers_table.item(rows, 0).setBackground(QColor(91, 235, 2))
-                elif "_480p" in str(data):
-                    self.brazzers_table.item(rows, 0).setBackground(QColor(130, 5, 105))
-
     def fill_brazzers_site(self, loaded_csv_df: pd.DataFrame):
         print(f"self.loaded_csv_df______: {self.loaded_csv_df}")
         self.brazzers_table.setRowCount(0)
@@ -855,33 +838,8 @@ class BrazzersManualMainWindow(QWidget):
             self.lbl_site_logo.setScaledContents(False)
             self.lbl_site_logo.show()
 
-
-
-
-            # self.selected_site_for_picture = selected_site_for_picture
-            # print('self.selected_site_for_picture: ', self.selected_site_for_picture)
-            # site_name_tmp = self.selected_site_for_picture.replace(" ", "_").lower() + ".png"
-            # path_folder_site_pictures = Path(r"/Users/joerg/repos/braz/site_pictures")
-            # path_to_picture = path_folder_site_pictures / Path(site_name_tmp)
-            # # path_to_picture = os.path.join(path_folder_site_pictures, site_name_tmp)
-
-            # print('path_to_picture', str(path_to_picture))
-            # # self.pixmap = QPixmap(str(path_to_picture))
+            self.selected_site_for_picture = selected_site_for_picture
             
-            # print('Debug 1')
-            # pixmap = QPixmap(str(path_to_picture))
-            # print('Debug 2')
-            # lbl_site_logo_tmp = QLabel("")
-            # print('Debug 3')
-            # lbl_site_logo_tmp.setPixmap(pixmap)
-            # # scaled_brazzers_picture = pixmap.scaled(lbl_site_logo_tmp.size() / 10, QtCore.Qt.KeepAspectRatio)
-            
-            # # lbl_site_logo_tmp.show()
-            # print('Debug 4')
-            # # self.lbl_site_logo.setScaledContents(False)
-            # print('Debug 5')
-            # # self.lbl_site_logo = lbl_site_logo_tmp
-            # #self.lbl_site_logo.show()
 
 
             # image = QFileDialog.getOpenFileName(None, 'OpenFile', '', "Image file(*.png)")
