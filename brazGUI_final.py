@@ -12,6 +12,8 @@ from PySide2.QtCore import Signal as pyqtSignal
 import os, subprocess, sys
 from MultiComboBox import MultiComboBox
 from connectToWerderNas import Main_WERDERNAS
+from connectToWerderNas import Main_WERDERNASDark
+
 from qt_material import apply_stylesheet
 from PySide2.QtGui import QFontDatabase
 from PySide2.QtGui import QColor
@@ -61,10 +63,9 @@ from PySide2.QtWidgets import (
     QApplication, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QTableView,
     QMainWindow, QWidget, QPushButton, QComboBox, QLabel, QListWidget, QTableWidget,
     QFileDialog, QFrame, QMessageBox, QTableWidgetItem, QStyle, QPlainTextEdit, QCheckBox,
-    QScrollArea, QHeaderView, QStyleFactory, QTextEdit, QSizePolicy
+    QScrollArea, QHeaderView, QStyleFactory, QTextEdit, QSizePolicy, QTabWidget
 )
 from PySide2.QtGui import QFont
-#from emat_mfl_combined.applications.pdw_upload.analysis_tools.path2proj import Path2ProjAnomaliesGeneral
 import pathlib
 import os
 import pandas as pd
@@ -77,8 +78,67 @@ class QHLine(QFrame):
         self.setFrameShape(QFrame.HLine)
         self.setFrameShadow(QFrame.Sunken)
 
-
 class BrazzersManualMainWindow(QWidget):
+    """Application to visualize the contents of brazzers folders
+
+    Args:
+        loaded_csv_df = dataframe of the loaded csv-file
+    """
+
+    def __init__(self, loaded_csv_df: Optional[pd.DataFrame] = None,
+                 parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+
+        self.setWindowTitle("BRAZZERS - QFrame Edition V0.41")
+        self.resize(1280, 820)
+        self.move(200, 0)
+
+        self.set_dark_mode()
+
+        if loaded_csv_df is None:
+            self.loaded_csv_df = None
+        else:
+            self.loaded_csv_df = loaded_csv_df
+
+        self.init_ui()
+    
+    def init_ui(self):
+        """Initialize the ui."""
+
+        layout = QVBoxLayout()
+        self.tab_widget = QTabWidget()
+
+        self.site_ps_overview = BrazzersSitesPSOverview(self.loaded_csv_df, 
+                                                        parent=self)
+        self.tab_widget.addTab(self.site_ps_overview, "Sites & PS")
+        self.zz_series_overview = BrazzersZZSeriesOverview()
+        self.tab_widget.addTab(self.zz_series_overview, "ZZ Series")
+
+        layout.addWidget(self.tab_widget)
+        self.setLayout(layout)
+
+    def set_dark_mode(self):
+        app.setStyle(QStyleFactory.create("Fusion"))
+        palette = self.palette()
+        palette.setColor(palette.Window, QColor(53, 53, 53))
+        palette.setColor(palette.WindowText, QColor(QtCore.Qt.green))
+        palette.setColor(palette.Base, QColor(25, 25, 25))
+        palette.setColor(palette.AlternateBase, QColor(53, 53, 53))
+        palette.setColor(palette.ToolTipBase, QtCore.Qt.white)
+        palette.setColor(palette.ToolTipText, QtCore.Qt.white)
+        palette.setColor(palette.Text, QtCore.Qt.white)
+        palette.setColor(palette.Button, QColor(53, 53, 53))
+        palette.setColor(palette.ButtonText, QtCore.Qt.white)
+        palette.setColor(palette.BrightText, QtCore.Qt.red)
+        palette.setColor(palette.Highlight, QColor(142, 145, 197))
+        palette.setColor(palette.HighlightedText, QtCore.Qt.black)
+        palette.setColor(palette.Disabled, palette.Text, QtCore.Qt.darkGray)
+        palette.setColor(palette.Disabled, palette.ButtonText, QtCore.Qt.darkGray)
+
+        self.setPalette(palette)
+
+
+class BrazzersSitesPSOverview(QWidget):
         
     # def __init__(self, x_pos_parent_window, y_pos_parent_window, width_parent_window):
     #     super().__init__()
@@ -87,8 +147,9 @@ class BrazzersManualMainWindow(QWidget):
     #     self.y_pos_parent_window = y_pos_parent_window
     #     self.width_parent_window = width_parent_window
     #     self.init_ui()
-    def __init__(self, loaded_csv_df: Optional[pd.DataFrame] = None) -> None:
+    def __init__(self, loaded_csv_df: Optional[pd.DataFrame] = None, parent: Optional[QWidget] = None) -> None:
         super().__init__()
+        self.parent = parent
 
         if loaded_csv_df is None:
             self.loaded_csv_df = None
@@ -112,8 +173,6 @@ class BrazzersManualMainWindow(QWidget):
         self.resize(1500, 1000)
         # 
         self.move(200, 0) #widht, height
-        
-        self.set_dark_mode()
         
         ### Define the layout ####
         
@@ -259,7 +318,7 @@ class BrazzersManualMainWindow(QWidget):
         self.play_button.clicked.connect(self.play_file)
         self.close_button = QPushButton("Close App")
         #self.close_button.setFixedWidth(120)
-        self.close_button.clicked.connect(self.close)
+        self.close_button.clicked.connect(self.parent.close)
         self.connect_to_werderNAS_button = QPushButton("Connect")
         #self.connect_to_werderNAS_button.setFixedWidth(120)
         self.connect_to_werderNAS_button.clicked.connect(self.connect_to_WerderNAS)
@@ -454,25 +513,7 @@ class BrazzersManualMainWindow(QWidget):
         #     # self.selected_site = self.combobox_site.currentText()
         #     self.fill_brazzers_site(self.loaded_csv_df)
         
-    def set_dark_mode(self):
-        app.setStyle(QStyleFactory.create("Fusion"))
-        palette = self.palette()
-        palette.setColor(palette.Window, QColor(53, 53, 53))
-        palette.setColor(palette.WindowText, QColor(QtCore.Qt.green))
-        palette.setColor(palette.Base, QColor(25, 25, 25))
-        palette.setColor(palette.AlternateBase, QColor(53, 53, 53))
-        palette.setColor(palette.ToolTipBase, QtCore.Qt.white)
-        palette.setColor(palette.ToolTipText, QtCore.Qt.white)
-        palette.setColor(palette.Text, QtCore.Qt.white)
-        palette.setColor(palette.Button, QColor(53, 53, 53))
-        palette.setColor(palette.ButtonText, QtCore.Qt.white)
-        palette.setColor(palette.BrightText, QtCore.Qt.red)
-        palette.setColor(palette.Highlight, QColor(142, 145, 197))
-        palette.setColor(palette.HighlightedText, QtCore.Qt.black)
-        palette.setColor(palette.Disabled, palette.Text, QtCore.Qt.darkGray)
-        palette.setColor(palette.Disabled, palette.ButtonText, QtCore.Qt.darkGray)
-
-        self.setPalette(palette)
+    
 
     #% Define the methods of the buttons etc....
 
@@ -755,7 +796,7 @@ class BrazzersManualMainWindow(QWidget):
 
 
     def fill_brazzers_site(self, loaded_csv_df: pd.DataFrame):
-        print(f"self.loaded_csv_df______: {self.loaded_csv_df}")
+        # print(f"self.loaded_csv_df______: {self.loaded_csv_df}")
         self.brazzers_table.setRowCount(0)
         self.selected_site = self.combobox_site.currentText()
         # print('currentText_site__: ', self.combobox_site.currentText())
@@ -870,13 +911,14 @@ class BrazzersManualMainWindow(QWidget):
         self.filtered_df = self.df[mask]
         self.fill_brazzers_table(self.filtered_df)
         # #print('mask: ', dataFrame[mask]['Title'])
-        print('filtered df: ', self.df[mask])
+        # print('filtered df: ', self.df[mask])
         # return self.df[mask]#['Title']
 
     def connect_to_WerderNAS(self):
         # self.main_werderNAS_window = Main_WERDERNAS(200, 150, 250, 150)
-        self.main_werderNAS_window = Main_WERDERNAS()
-        self.main_werderNAS_window.show()
+        self.main_werderNAS_window = Main_WERDERNASDark()
+        # self.main_werderNAS_window = Main_WERDERNAS()
+        self.main_werderNAS_dow.show()
 
 ############################################################
 class AnomTypeFilterFrame(QFrame):
@@ -1048,13 +1090,12 @@ class AnomTypeFilterFrame(QFrame):
         else:
             self.apply_button.setEnabled(True)
 
-class RuntimeStylesheets(BrazzersManualMainWindow, QtStyleTools):
+class RuntimeStylesheets(BrazzersSitesPSOverview, QtStyleTools):
     
     def __init__(self):
         super().__init__()
-        #self.main = QUiLoader().load('main_window.ui', self)
-        # self.main = BrazzersManualMainWindow(200, 330, 800) 
-        self.main = BrazzersManualMainWindow() 
+        # self.main = BrazzersSitesPSOverview(200, 330, 800) 
+        self.main = BrazzersSitesPSOverview() 
         # self.apply_stylesheet(self.main, 'dark_amber.xml', extra=extra)
 
         # self.main.btn_change_theme.clicked.connect(lambda: self.apply_stylesheet(self.main, 'dark_teal.xml'))
@@ -1066,7 +1107,14 @@ class RuntimeStylesheets(BrazzersManualMainWindow, QtStyleTools):
         # # self.apply_stylesheet(self.main, 'light_red.xml')
         # self.apply_stylesheet(self.main, 'light_blue.xml'
 
-    
+
+class BrazzersZZSeriesOverview(QWidget):
+    """Widget to visualize the Overview of Brazzers ZZ_Series.
+        The general look is recreated in this file
+
+    Args:
+        loaded_csv_df: dataframe of the loaded csv-file 
+    """
 # extra['QMenu'] = {
 #     'height': 50,
 #     'padding': '10px 10px 10px 10px',  # top, right, bottom, left
@@ -1083,13 +1131,13 @@ if __name__ == '__main__':
 
     if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
         app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-    
+    # sdf
     _load_csv_file_automatically = True
 
     if _load_csv_file_automatically:
         print(f"Loading csv_file automatically: ..")
         _csv_file_path  = Path(
-            r"/Users/joerg/repos/brazGUI/csv_data/df_final_19_06_23.csv"
+            r"/Users/joerg/repos/brazGUI/csv_data/df_final_13_07_23.csv"
         )
         _df = pd.read_csv(_csv_file_path)
     else:
@@ -1102,7 +1150,9 @@ if __name__ == '__main__':
     # frame.main.show()
     
     # apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False, extra=extra)
-    # window = BrazzersManualMainWindow()
+    # window = BrazzersSitesPSOverview()
+    # window = BrazzersSitesPSOverview(loaded_csv_df=_df)
     window = BrazzersManualMainWindow(loaded_csv_df=_df)
+
     window.show()
     sys.exit(app.exec_())

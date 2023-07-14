@@ -1,0 +1,48 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    // "version": "2.0.0",
+    // "tasks": [
+    //     {
+    //         "label": "echo",
+    //         "type": "shell",
+    //         "command": "echo Hello"
+    //     }
+    // ]
+    // "presentation": {
+    //     "reveal": "always",
+    //     "panel": "new"
+    // },
+    // "problemMatcher": [],
+    // "group": {
+    //     "kind": "build",
+    //     "isDefault": true
+    // },
+    // "args": [
+    //     "/Users/joerg/repos/brazGUI/brazGUI_final.py"
+    // ],
+    // "label": "Run brazGUI_final",
+    //         "type": "shell",
+    //         "command": "/Users/joerg/opt/anaconda3/envs/pyside2_dev/bin/python",
+    //         "options": {
+    //             "statusbar": {
+    //                 "label": "brazGUI",
+    //                 "color": "#3ff148"
+    //             }
+    //         },
+
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "echo",
+            "type": "shell",
+            "command": "echo hallo",
+            "options": {
+                "statusbar": {
+                    "label": "brazGUI",
+                    "color": "#3ff148"
+                }
+            },            
+        }
+    ]
+}
