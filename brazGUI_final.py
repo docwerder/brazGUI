@@ -85,20 +85,21 @@ class BrazzersManualMainWindow(QWidget):
         loaded_csv_df = dataframe of the loaded csv-file
     """
 
-    def __init__(self, loaded_csv_df: Optional[pd.DataFrame] = None,
-                 parent: Optional[QWidget] = None) -> None:
+    def __init__(self, loaded_csv_df: Optional[pd.DataFrame] = None, loaded_csv_zz_series_df: Optional[pd.DataFrame] = None,  parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
-        self.setWindowTitle("BRAZZERS - QFrame Edition V0.41")
+        self.setWindowTitle("BRAZZERS - QFrame Edition V0.5 + ZZ_series")
         self.resize(1280, 820)
         self.move(200, 0)
 
         self.set_dark_mode()
 
-        if loaded_csv_df is None:
+        if (loaded_csv_df) is None and (loaded_csv_zz_series_df is None):
             self.loaded_csv_df = None
+            self.loaded_csv_zz_series_df = None
         else:
             self.loaded_csv_df = loaded_csv_df
+            self.loaded_csv_zz_series_df = loaded_csv_zz_series_df
 
         self.init_ui()
     
@@ -108,10 +109,9 @@ class BrazzersManualMainWindow(QWidget):
         layout = QVBoxLayout()
         self.tab_widget = QTabWidget()
 
-        self.site_ps_overview = BrazzersSitesPSOverview(self.loaded_csv_df, 
-                                                        parent=self)
-        self.tab_widget.addTab(self.site_ps_overview, "Sites & PS")
-        self.zz_series_overview = BrazzersZZSeriesOverview()
+        self.site_ps_overview = BrazzersSitesPSOverview(self.loaded_csv_df, parent=self)
+        self.tab_widget.addTab(self.site_ps_overview, "Sites & PS1")
+        self.zz_series_overview = BrazzersZZSeriesOverview(self.loaded_csv_zz_series_df, parent=self)
         self.tab_widget.addTab(self.zz_series_overview, "ZZ Series")
 
         layout.addWidget(self.tab_widget)
@@ -169,7 +169,7 @@ class BrazzersSitesPSOverview(QWidget):
 
     def init_ui(self) -> None:
 
-        self.setWindowTitle("BRAZZERS - Manual Edition V0.6!")
+        self.setWindowTitle("BRAZZERS - Manual Edition V0.7!")
         self.resize(1500, 1000)
         # 
         self.move(200, 0) #widht, height
@@ -769,7 +769,7 @@ class BrazzersSitesPSOverview(QWidget):
 
         # Setzen Sie die Hintergrundfarbe des QTableWidgetItem
         
-        print('going into fill_brazzers_table_function....111')
+        # print('going into fill_brazzers_table_function....111')
         #% Filling the table with the content of the csv-file
         self.brazzers_table.setRowCount(0)
         for rows, columns in selected_df.iterrows():
@@ -1107,18 +1107,121 @@ class RuntimeStylesheets(BrazzersSitesPSOverview, QtStyleTools):
         # # self.apply_stylesheet(self.main, 'light_red.xml')
         # self.apply_stylesheet(self.main, 'light_blue.xml'
 
-
 class BrazzersZZSeriesOverview(QWidget):
     """Widget to visualize the Overview of Brazzers ZZ_Series.
         The general look is recreated in this file
-
+    
     Args:
         loaded_csv_df: dataframe of the loaded csv-file 
     """
-# extra['QMenu'] = {
-#     'height': 50,
-#     'padding': '10px 10px 10px 10px',  # top, right, bottom, left
-# }
+
+    def __init__(self, loaded_csv_zz_series_df: Optional[pd.DataFrame] = None, parent: Optional[QWidget] = None) -> None:
+        super().__init__()
+        self.parent = parent
+
+        if loaded_csv_zz_series_df is None:
+            self.loaded_csv_zz_series_df = None
+        else:
+            self.loaded_csv_zz_series_df = loaded_csv_zz_series_df
+            
+        #     # self.site_list_unique = self.loaded_csv_df['Site'].unique()     
+        #     # self.site_list_sorted = sorted(list(self.site_list_unique))
+        #     # self.site_list_sorted = [lf.lstrip() for lf in self.site_list_sorted]
+        #     # self.site_list_sorted.insert(0, "== All Sites ==")
+        #     # self.brazzers_table.setRowCount(0)
+        #     # self.selected_site = self.combobox_site.currentText()
+        #     self.fill_brazzersa_site(self.loaded_csv_df)
+            
+        self.init_ui()
+        
+    def init_ui(self):
+        """ Initialize the ui."""
+
+        self.setWindowTitle("BRAZZERS - ZZ Series !")
+        self.resize(1500, 1000)
+        # 
+        self.move(200, 0)
+
+        ### Define the layout ####
+        
+        # Create the complete layout
+        complete_layout_zz_series = QVBoxLayout(self)
+
+        #% Layout for brazzers_label and Site_picture
+        self.brazzers_logo_site_logo_layout_zz_series = QHBoxLayout()
+
+        #% Define label for brazzers_logo and site_logo. Fir st step: Default png-picture!
+        self.lbl_brazzers_logo_zz_series = QLabel()
+        
+        self.pixmap_brazzers_zz_series = QPixmap("/Users/joerg/repos/braz/braz_manual_edition/brazzers.png")
+
+        #% Setting the values for the site_logo 
+        self.lbl_site_logo_zz_series = QLabel("Placeholder!!!!")
+        pixmap_zz_series = QPixmap("/Users/joerg/repos/braz/braz_manual_edition/zz_series.jpg")
+
+        scaled_zz_series = pixmap_zz_series.scaled(self.lbl_site_logo_zz_series.size() / 10, QtCore.Qt.KeepAspectRatio)
+        self.lbl_site_logo_zz_series.setPixmap(scaled_zz_series)
+        self.lbl_site_logo_zz_series.setScaledContents(False)
+
+        #% Fill the brazzers_and_site_logo_layout
+        self.brazzers_logo_site_logo_layout_zz_series.addWidget(self.lbl_brazzers_logo_zz_series)
+        self.brazzers_logo_site_logo_layout_zz_series.addStretch(1)
+        self.brazzers_logo_site_logo_layout_zz_series.addWidget(self.lbl_site_logo_zz_series)
+
+        #% Setting up the QTable and the control buttons or comboboxes
+
+        #% First: Define QHBoxLayout, so that the alignment of the 
+        #% table and the comboboxes are horizontal
+
+        self.brazzers_table_and_comboxes_layout_zz_series = QHBoxLayout()
+        self.brazzers_table_and_comboxes_layout_zz_series = QHBoxLayout()
+        # self.brazzers_table_and_comboxes_layout.setContentsMargins(0, 0, 0, 0)
+        #% QTable-Layout 
+        self.brazzers_table_layout_zz_series = QVBoxLayout()
+        self.brazzers_table_zz_series = QTableWidget()
+
+        self.brazzers_table_zz_series.setColumnCount(15)
+        self.brazzers_table_zz_series.setHorizontalHeaderLabels(["Nr.", "Site", "PS1", "PS2", "PS3", "Title",
+                                                      "PS4", "PS5", "PS6", "PS7", "PS8", "PS9",
+                                                      "PS10", "loc", "link"])
+        
+        header_zz_series  = self.brazzers_table_zz_series.horizontalHeader()
+        header_zz_series = self.brazzers_table_zz_series.horizontalHeader()
+        # header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        header_zz_series.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        header_zz_series.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        header_zz_series.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
+
+        header_zz_series.setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)
+        # self.brazzers_table.resize(1000, 500)
+        #self.brazzers_table.setFixedWidth(1000)
+        self.fill_brazzers_table_zz_series(self.loaded_csv_zz_series_df)
+
+        #% Define the function which his executed, when cell was clicked !
+        # self.brazzers_table_zz_series.cellClicked.connect(self.cell_was_clicked)
+        
+
+
+        self.brazzers_table_layout_zz_series.addWidget(self.brazzers_table_zz_series)
+
+
+
+        complete_layout_zz_series.addLayout(self.brazzers_table_layout_zz_series)
+        # complete_layout_zz_series.addLayout(self.brazzers_logo_site_logo_layout_zz_series)
+
+    
+    
+    #% Define the relevant and important functions for handling the data inside the QWidget
+
+
+    def fill_brazzers_table_zz_series(self, selected_df_zz_series: pd.DataFrame):
+        print("going into fill_brazzers_table...")
+        self.brazzers_table_zz_series.setRowCount(0)
+        for rows, columns in selected_df_zz_series.iterrows():
+            rows = self.brazzers_table_zz_series.rowCount()
+            self.brazzers_table_zz_series.insertRow(rows)
+            for num, data in enumerate(columns):
+                self.brazzers_table_zz_series.setItem(rows, num, QTableWidgetItem(str(data)))
 
 if __name__ == '__main__':
     # app = QApplication(sys.argv)
@@ -1132,14 +1235,17 @@ if __name__ == '__main__':
     if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
         app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
     # sdf
-    _load_csv_file_automatically = True
+    _load_csv_files_automatically = True
 
-    if _load_csv_file_automatically:
+    if _load_csv_files_automatically:
         print(f"Loading csv_file automatically: ..")
         _csv_file_path  = Path(
             r"/Users/joerg/repos/brazGUI/csv_data/df_final_13_07_23.csv"
         )
-        _df = pd.read_csv(_csv_file_path)
+        df_sites_ps =  pd.read_csv(_csv_file_path)
+
+        _csv_zz_series_path = Path(r"/Users/joerg/repos/brazGUI/csv_data/df_zz_series_13_07_23.csv")
+        df_zz_series = pd.read_csv(_csv_zz_series_path)
     else:
         _df = None
 
@@ -1152,7 +1258,7 @@ if __name__ == '__main__':
     # apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False, extra=extra)
     # window = BrazzersSitesPSOverview()
     # window = BrazzersSitesPSOverview(loaded_csv_df=_df)
-    window = BrazzersManualMainWindow(loaded_csv_df=_df)
+    window = BrazzersManualMainWindow(loaded_csv_df=df_sites_ps, loaded_csv_zz_series_df=df_zz_series)
 
     window.show()
     sys.exit(app.exec_())
